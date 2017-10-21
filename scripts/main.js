@@ -30,6 +30,10 @@ var app = playground({
         }
     },
 
+    keydown: function(e) {
+        //console.log(e.key)
+    },
+
     step: function() {
         switch (this.sta) {
             case 'menu':
