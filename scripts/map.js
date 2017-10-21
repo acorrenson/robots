@@ -67,17 +67,16 @@ function Map(w, h){
 
             app.layer.fillStyle(color);
             app.layer.fillRect(tile.x, tile.y, 64, 64);
-            app.layer.strokeStyle("black");
-            app.layer.strokeRect(tile.x, tile.y, 64, 64);
+            app.layer.drawImage(app.images["mars"], tile.x, tile.y);
 
-            if(/*!tile.claimed*/ tile.toClaim){
+            if(tile.toClaim){
                 app.layer.save();
-                app.layer.a(0.5);
+                app.layer.a(0.75);
                 app.layer.fillStyle('black');
                 app.layer.fillRect(tile.x, tile.y, 64, 64);
                 app.layer.restore()
                 app.layer.drawImage(app.images["plus"], tile.x, tile.y);
-            } else {
+            } else if(!tile.toClaim) {
                 app.layer.save();
                 app.layer.a(tile.alpha);
                 app.layer.fillStyle('black');

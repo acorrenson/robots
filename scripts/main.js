@@ -1,7 +1,8 @@
 var app = playground({
 
-    width: 800,
-    height: 800,
+    width: 64*9,
+    height: 64*9,
+    smoothing: false,
 
     create: function() {
         this.sta = 'game';
@@ -15,7 +16,7 @@ var app = playground({
         this.map.map[5][4].claim();
         this.map.update();
 
-        this.loadImages('plus');
+        this.loadImages('plus','mars');
     },
 
     mousedown: function(e) {
