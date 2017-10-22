@@ -53,6 +53,27 @@ function Map(w, h){
         }
     }
 
+    this.displayInfo = function() {
+        var display = (x, y) => {
+            var tile = this.map[y][x];
+            if(tile.toClaim){
+                app.layer.save();
+                app.layer.a(0.8);
+                app.layer.fillStyle('black');
+                app.layer.fillRect(tile.x, tile.y, 64, 64);
+                app.layer.restore()
+                app.layer.drawImage(app.images["plus"], tile.x, tile.y);
+            } else if(!tile.toClaim) {
+                app.layer.save();
+                app.layer.a(tile.alpha);
+                app.layer.fillStyle('black');
+                app.layer.fillRect(tile.x, tile.y, 64, 64);
+                app.layer.restore()
+            }
+        }
+        this.parse(display);
+    }
+
     this.display = function() {
         var display = (x, y) => {
             var tile = this.map[y][x]
@@ -66,23 +87,23 @@ function Map(w, h){
             }
 
             app.layer.fillStyle(color);
-            app.layer.fillRect(tile.x + app.camera.x, tile.y + app.camera.y, 64, 64);
-            //app.layer.drawImage(app.images["mars"], tile.x, tile.y);
+            app.layer.fillRect(tile.x, tile.y, 64, 64);
+            app.layer.drawImage(app.images["mars"], tile.x, tile.y);
 
-            if(tile.toClaim){
+            /*if(tile.toClaim){
                 app.layer.save();
-                app.layer.a(0.75);
+                app.layer.a(0.8);
                 app.layer.fillStyle('black');
-                app.layer.fillRect(tile.x + app.camera.x, tile.y + app.camera.y, 64, 64);
+                app.layer.fillRect(tile.x, tile.y, 64, 64);
                 app.layer.restore()
-                app.layer.drawImage(app.images["plus"], tile.x + app.camera.x, tile.y + app.camera.y);
+                app.layer.drawImage(app.images["plus"], tile.x, tile.y);
             } else if(!tile.toClaim) {
                 app.layer.save();
                 app.layer.a(tile.alpha);
                 app.layer.fillStyle('black');
-                app.layer.fillRect(tile.x + app.camera.x, tile.y + app.camera.y, 64, 64);
+                app.layer.fillRect(tile.x, tile.y, 64, 64);
                 app.layer.restore()
-            }
+            }*/
         }
         this.parse(display);
     }

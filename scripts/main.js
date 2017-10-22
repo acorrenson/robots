@@ -6,6 +6,7 @@ var app = playground({
 
     create: function() {
         this.sta = 'game';
+        this.player = new Player();
         this.map = new Map(9, 9);
         this.map.generate();
         this.claimed = [];
@@ -16,7 +17,7 @@ var app = playground({
         this.map.map[5][4].claim();
         this.map.update();
 
-        this.loadImages('plus','mars');
+        this.loadImages('plus','mars','rover1','rover1s');
     },
 
     mousedown: function(e) {
@@ -28,6 +29,10 @@ var app = playground({
                 this.mouseGame(e);
                 break;
         }
+    },
+
+    mousemove: function(e) {
+        app.mouseMoveGame(e);
     },
 
     keydown: function(e) {
