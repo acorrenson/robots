@@ -5,7 +5,7 @@ app.updateGame = function(){
 
 app.drawGame = function() {
     app.map.display();
-    if(app.player.selected) app.player.drawPath();
+    //if(app.player.selected) app.player.drawPath(app.player.calcPath());
     app.map.displayInfo();
     app.player.draw();
     app.layer.save();
@@ -30,8 +30,11 @@ app.mouseGame = function(e) {
     }
 
     if(app.map.map[ny][nx].claimed && app.player.selected && (ny != app.player.ny || nx != app.player.nx )) {
-        app.player.nx = nx;
-        app.player.ny = ny;
+        app.read();
+        var b = {x: app.player.nx, y: app.player.ny};
+        var a = {x: Math.floor(app.mouse.x/64), y: Math.floor(app.mouse.y/64)}
+        console.log(a, b)
+        console.log( app.find(app.map.map,a, b) );
         app.player.deselect();
     }
 
