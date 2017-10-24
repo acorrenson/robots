@@ -16,25 +16,29 @@ app.drawGame = function() {
 }
 
 app.mouseGame = function(e) {
+    //case pointée
     var nx = Math.floor(e.x / 64);
     var ny = Math.floor(e.y / 64);
 
+    //claim if left clicked
     if(app.map.map[ny][nx].toClaim && e.button == 'left'){
         app.map.map[ny][nx].claim();
         app.map.update();
         console.log(" Tile ", nx + " " + ny + " claimed");
     }
 
+    //select the rover
     if(nx == app.player.nx && ny == app.player.ny && e.button == 'left'){
         app.player.select();
     }
 
+    //moove the rover
     if(app.map.map[ny][nx].claimed && app.player.selected && (ny != app.player.ny || nx != app.player.nx )) {
-        app.read();
+        app.player.fillMarked();
         var b = {x: app.player.nx, y: app.player.ny};
         var a = {x: Math.floor(app.mouse.x/64), y: Math.floor(app.mouse.y/64)}
-        console.log(a, b)
-        console.log( app.find(app.map.map,a, b) );
+        var p = app.player.findPathTo(app.map.map,a, b);
+        app.player.followPath(p, 0)
         app.player.deselect();
     }
 
