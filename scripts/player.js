@@ -28,6 +28,15 @@ function Player(){
         app.layer.drawImage(app.images[this.image], this.nx * 64, this.ny * 64);
     }
 
+    this.drawSelector = function(x, y) {
+        app.layer
+            .save()
+            .a(0.5)
+            .fillStyle('cyan')
+            .fillRect(app.px, app.py, 64, 64)
+            .restore()
+    }
+
     this.fillMarked = function() {
         this.marked = [];
         for(var a = 0; a < app.map.map.length; a++){
@@ -60,8 +69,8 @@ function Player(){
 
         var son = [
             {x: sx + 1, y: sy},
-            {x: sx - 1, y: sy},
             {x: sx, y: sy + 1},
+            {x: sx - 1, y: sy},
             {x: sx, y: sy - 1}
         ];
 

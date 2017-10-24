@@ -5,14 +5,15 @@ app.updateGame = function(){
 
 app.drawGame = function() {
     app.map.display();
-    //if(app.player.selected) app.player.drawPath(app.player.calcPath());
     app.map.displayInfo();
     app.player.draw();
-    app.layer.save();
+    /*app.layer.save();
     app.layer.a(0.5);
     app.layer.fillStyle('cyan');
     app.layer.fillRect(app.px, app.py, 64, 64);
     app.layer.restore();
+    */
+    app.player.drawSelector();
 }
 
 app.mouseGame = function(e) {
@@ -47,4 +48,17 @@ app.mouseGame = function(e) {
 app.mouseMoveGame = function(e) {
     app.px = Math.floor(e.x / 64) * 64;
     app.py = Math.floor(e.y / 64) * 64;
+
+    if(app.px < 0 ){
+        app.px = 0;
+    } else if(app.px > app.width - 64){
+        app.px = app.width - 64;
+    }
+
+    if(app.py < 0 ){
+        app.py = 0;
+    } else if(app.py > app.height - 64){
+        app.py = app.height - 64;
+    }
+
 }

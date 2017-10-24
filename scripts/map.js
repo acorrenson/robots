@@ -35,8 +35,9 @@ function Map(w, h){
             if(app.claimed[i].toClaim){
                 app.claimed[i].toClaim = false;
             }
-            var nx = app.claimed[i].x / 64
-            var ny = app.claimed[i].y / 64
+            var nx = app.claimed[i].x / 64;
+            var ny = app.claimed[i].y / 64;
+
             if(ny - 1 >= 0 && !app.map.map[ny-1][nx].claimed){
                 app.map.map[ny-1][nx].toClaim = true;
             }
@@ -90,20 +91,6 @@ function Map(w, h){
             app.layer.fillRect(tile.x, tile.y, 64, 64);
             app.layer.drawImage(app.images["mars"], tile.x, tile.y);
 
-            /*if(tile.toClaim){
-                app.layer.save();
-                app.layer.a(0.8);
-                app.layer.fillStyle('black');
-                app.layer.fillRect(tile.x, tile.y, 64, 64);
-                app.layer.restore()
-                app.layer.drawImage(app.images["plus"], tile.x, tile.y);
-            } else if(!tile.toClaim) {
-                app.layer.save();
-                app.layer.a(tile.alpha);
-                app.layer.fillStyle('black');
-                app.layer.fillRect(tile.x, tile.y, 64, 64);
-                app.layer.restore()
-            }*/
         }
         this.parse(display);
     }

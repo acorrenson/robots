@@ -2,7 +2,7 @@ var app = playground({
 
     width: 64*9,
     height: 64*9,
-    smoothing: false,
+    //smoothing: false,
 
     create: function() {
         this.sta = 'game';
