@@ -17,7 +17,11 @@ var app = playground({
         this.map.map[5][4].claim();
         this.map.update();
 
-        this.loadImages('plus','mars','rover1','rover1s');
+        this.loadImages(
+            'plus','mars','rover1',
+            'rover1s','rover1Left',
+            'rover1Right','rover1Down'
+        );
     },
 
     mousedown: function(e) {

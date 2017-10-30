@@ -23,8 +23,8 @@ function Map(w, h){
     }
 
     this.parse = function( action ){
-        for(var y = 0; y < h; y++ ){
-            for(var x = 0; x < w; x++){
+        for(var y = 0; y < this.h; y++ ){
+            for(var x = 0; x < this.w; x++){
                 action(x, y);
             }
         }

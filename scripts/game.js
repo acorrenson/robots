@@ -4,24 +4,17 @@ app.updateGame = function(){
 }
 
 app.drawGame = function() {
-    app.map.display();
-    app.map.displayInfo();
-    app.player.draw();
-    /*app.layer.save();
-    app.layer.a(0.5);
-    app.layer.fillStyle('cyan');
-    app.layer.fillRect(app.px, app.py, 64, 64);
-    app.layer.restore();
-    */
-    app.player.drawSelector();
+    app.map.display();      //display map ground
+    app.map.displayInfo();  //display map informations
+    app.player.draw();      //draw the rover
+    app.player.drawSelector();  //draw sellector
 }
 
 app.mouseGame = function(e) {
-    //case pointée
-    var nx = Math.floor(e.x / 64);
-    var ny = Math.floor(e.y / 64);
+    var nx = Math.floor(e.x / 64); //pointed tile x
+    var ny = Math.floor(e.y / 64); //pointed tile y
 
-    //claim if left clicked
+    //claim a tile
     if(app.map.map[ny][nx].toClaim && e.button == 'left'){
         app.map.map[ny][nx].claim();
         app.map.update();
@@ -38,8 +31,11 @@ app.mouseGame = function(e) {
         app.player.fillMarked();
         var b = {x: app.player.nx, y: app.player.ny};
         var a = {x: Math.floor(app.mouse.x/64), y: Math.floor(app.mouse.y/64)}
-        var p = app.player.findPathTo(app.map.map,a, b);
-        app.player.followPath(p, 0)
+        setTimeout(()=> {
+            var p = app.player.findPathTo(app.map.map,a, b, 0);
+            app.player.followPath(p, 0);
+            app.player.fillMarked();
+        }, 1000);
         app.player.deselect();
     }
 
