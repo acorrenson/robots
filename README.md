@@ -2,4 +2,4 @@
 
 This is a little exploration/gestion game.
 
-The demo isn't ready
+The demo version isn't ready

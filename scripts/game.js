@@ -18,7 +18,7 @@ app.mouseGame = function(e) {
     if(app.map.map[ny][nx].toClaim && e.button == 'left'){
         app.map.map[ny][nx].claim();
         app.map.update();
-        console.log(" Tile ", nx + " " + ny + " claimed");
+        //console.log(" Tile ", nx + " " + ny + " claimed");
     }
 
     //select the rover

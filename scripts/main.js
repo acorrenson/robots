@@ -1,13 +1,13 @@
 var app = playground({
 
-    width: 64*9,
+    width: 64*12,
     height: 64*9,
     //smoothing: false,
 
     create: function() {
         this.sta = 'game';
         this.player = new Player();
-        this.map = new Map(9, 9);
+        this.map = new Map(12, 9);
         this.map.generate();
         this.claimed = [];
         this.map.map[4][4].claim();

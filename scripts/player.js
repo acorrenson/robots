@@ -27,6 +27,13 @@ function Player(){
 
     this.draw = function() {
         app.layer.drawImage(app.images[this.image], this.nx * 64, this.ny * 64);
+        var x = this.nx * 64;
+        var y = this.ny * 64;
+        var w = this.energy/100*52;
+        app.layer.fillStyle('white');
+        app.layer.fillRect(x+6, y-8, 52, 6);
+        app.layer.fillStyle('cyan');
+        app.layer.fillRect(x+6, y-8, w, 6);
     }
 
     this.drawSelector = function(x, y) {
@@ -74,17 +81,38 @@ function Player(){
         var dirx = Math.sign(tx - sx);
         var diry = Math.sign(ty - sy);
 
-        if(Math.abs(dirx) === 0) dirx = 1;
-        if(Math.abs(diry) === 0) diry = 1;
+        var prio;
 
-        console.log(dirx, diry)
+        if(Math.abs(dirx) === 0) {
+            dirx = 1;
+            prio = 'y';
+        }
 
-        var son = [
-            {x: sx + 1, y: sy},
-            {x: sx - 1, y: sy},
-            {x: sx, y: sy + 1},
-            {x: sx, y: sy - 1}
-        ];
+        if(Math.abs(diry) === 0) {
+            diry = 1;
+            prio = 'x';
+        }
+
+        //console.log(dirx, diry)
+
+        var son1 = {x: sx + dirx, y: sy};
+        var son2 = {x: sx, y: sy + diry};
+        var son3 = {x: sx - dirx, y: sy};
+        var son4 = {x: sx, y: sy - diry};
+
+        if(!prio) {
+            var son = [
+                son1,son2, son3, son4
+            ];
+        } else if(prio === 'y') {
+            var son = [
+                son2, son1, son4, son3
+            ]
+        } else if(prio === 'x') {
+            var son = [
+                son1,son2, son3, son4
+            ]
+        }
 
         for(var i = 0; i < son.length; i++) {
             var p = app.player.findPathTo(map, target, son[i], k+1);
@@ -95,6 +123,7 @@ function Player(){
     }
 
     this.followPath = function(path, i) {
+        this.energy -= 1;
         if(i >= path.length){
             setTimeout( () => {
                 this.image = 'rover1';
@@ -104,6 +133,7 @@ function Player(){
 
         var a = path[i].x - this.nx;
         var b = path[i].y - this.ny;
+
         if(a <= -1){
             this.image = 'rover1Left';
         } else if(a > 0) {
