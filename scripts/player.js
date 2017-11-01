@@ -13,7 +13,6 @@ function Player(){
         } else {
             this.deselect();
         }
-
     }
 
     this.deselect = function() {
@@ -32,8 +31,10 @@ function Player(){
         var w = this.energy/100*52;
         app.layer.fillStyle('white');
         app.layer.fillRect(x+6, y-8, 52, 6);
-        app.layer.fillStyle('cyan');
-        app.layer.fillRect(x+6, y-8, w, 6);
+        if(w>=0) {
+            app.layer.fillStyle('cyan');
+            app.layer.fillRect(x+6, y-8, w, 6);
+        }
     }
 
     this.drawSelector = function(x, y) {
@@ -58,8 +59,8 @@ function Player(){
         return marked;
     }
 
-    this.findPathTo = function(map, target, start, k) {
-        //console.log(this.marked);
+    this.findPathTo = function(map, target, start) {
+
         var sx = start.x;
         var sy = start.y;
 
@@ -84,40 +85,32 @@ function Player(){
         var prio;
 
         if(Math.abs(dirx) === 0) {
-            dirx = 1;
+            dirx = -1;
             prio = 'y';
+            console.log('prio y')
         }
 
         if(Math.abs(diry) === 0) {
-            diry = 1;
+            diry = -1;
             prio = 'x';
+            console.log('prio x')
         }
-
-        //console.log(dirx, diry)
 
         var son1 = {x: sx + dirx, y: sy};
         var son2 = {x: sx, y: sy + diry};
         var son3 = {x: sx - dirx, y: sy};
         var son4 = {x: sx, y: sy - diry};
 
-        if(!prio) {
-            var son = [
-                son1,son2, son3, son4
-            ];
-        } else if(prio === 'y') {
-            var son = [
-                son2, son1, son4, son3
-            ]
-        } else if(prio === 'x') {
-            var son = [
-                son1,son2, son3, son4
-            ]
-        }
+        var son = [son1, son2, son3, son4];
+
+        if(prio === 'y') son = [son2, son1, son4, son3];
 
         for(var i = 0; i < son.length; i++) {
-            var p = app.player.findPathTo(map, target, son[i], k+1);
+            var p = app.player.findPathTo(map, target, son[i]);
             if (p && (!q || p.length < q.length)) q = p;
         }
+
+
         var r = q && [start].concat(q);
         return r;
     }
@@ -128,6 +121,7 @@ function Player(){
             setTimeout( () => {
                 this.image = 'rover1';
             }, 200);
+            this.mooving = false;
             return;
         }
 
@@ -153,5 +147,26 @@ function Player(){
             this.followPath(path, i+1)
         }, 500);
     }
+
+    this.renderPath = function(path) {
+        if(!path)
+        return;
+
+        if(path.length >= 4) {
+            var c = 'red';
+        } else {
+            var c = 'green';
+        }
+
+        for(var i = 0; i < path.length; i++) {
+            app.layer
+                .save()
+                .a(0.5)
+                .fillStyle(c)
+                .fillRect(path[i].x*64, path[i].y*64, 64, 64)
+                .restore()
+        }
+    }
+
 
 }//end class

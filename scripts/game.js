@@ -8,6 +8,7 @@ app.drawGame = function() {
     app.map.displayInfo();  //display map informations
     app.player.draw();      //draw the rover
     app.player.drawSelector();  //draw sellector
+    app.player.renderPath(app.papa);
 }
 
 app.mouseGame = function(e) {
@@ -28,33 +29,44 @@ app.mouseGame = function(e) {
 
     //moove the rover
     if(app.map.map[ny][nx].claimed && app.player.selected && (ny != app.player.ny || nx != app.player.nx )) {
+        app.player.mooving = true;
         app.player.fillMarked();
         var b = {x: app.player.nx, y: app.player.ny};
         var a = {x: Math.floor(app.mouse.x/64), y: Math.floor(app.mouse.y/64)}
-        setTimeout(()=> {
-            var p = app.player.findPathTo(app.map.map,a, b, 0);
-            app.player.followPath(p, 0);
-            app.player.fillMarked();
-        }, 1000);
+        var p = app.player.findPathTo(app.map.map,a, b);
+        app.player.followPath(p, 0);
+        app.player.fillMarked();
         app.player.deselect();
     }
 
 }
 
 app.mouseMoveGame = function(e) {
-    app.px = Math.floor(e.x / 64) * 64;
-    app.py = Math.floor(e.y / 64) * 64;
+    app.pnx = Math.floor(e.x / 64);
+    app.pny = Math.floor(e.y / 64);
 
-    if(app.px < 0 ){
-        app.px = 0;
-    } else if(app.px > app.width - 64){
-        app.px = app.width - 64;
+    if(app.pnx < 0 ){
+        app.pnx = 0;
+    } else if(app.pnx > app.width/64 - 1){
+        app.pnx = app.width/64 - 1;
+        //console.log(app.pnx)
     }
 
-    if(app.py < 0 ){
-        app.py = 0;
-    } else if(app.py > app.height - 64){
-        app.py = app.height - 64;
+    if(app.pny < 0 ){
+        app.pny = 0;
+    } else if(app.pny > app.height/64 - 1){
+        app.pny = app.height/64 - 1;
+        //console.log(app.pny)
     }
 
+    app.px = app.pnx * 64;
+    app.py = app.pny * 64;
+
+    if(!app.player.mooving) {
+        app.player.fillMarked();
+        var b = {x: app.player.nx, y: app.player.ny};
+        var a = {x: Math.floor(app.mouse.x/64), y: Math.floor(app.mouse.y/64)};
+        app.papa = app.player.findPathTo(app.map.map, a, b);
+        app.player.fillMarked();
+    }
 }
