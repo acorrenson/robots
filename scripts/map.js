@@ -1,95 +1,73 @@
-function Map(w, h){
-  this.w = w;
-  this.h = h;
-  this.map = [];
+class Map {
+  constructor(w, h) {
+    this.w = w;
+    this.h = h;
+    this.tiles = [];
+  }
 
-  this.generate = function(){
-    for(var y = 0; y < h; y++) {
+  generate() {
+    for (var i = 0; i < this.h; i++) {
       var line = [];
-      var char;
-      for(var x = 0; x < w; x++) {
-        var choice = randInt(2);
-        if(choice >= 1){
-          char = 0;
+      for (var j = 0; j < this.w; j++) {
+        line.push(new Tile(1));
+      }
+      this.tiles.push(line);
+    }
+  }
+
+  claim(x, y) {
+    if (this.in(x, y) && this.tiles[y][x].toClaim)
+      this.tiles[y][x].claim();
+  }
+
+  getMap() {
+    var t = [];
+    for (var i = 0; i < this.h; i++) {
+      var line = [];
+      for (var j = 0; j < this.w; j++) {
+        if(this.isClaimed(j, i)) {
+          line.push(0);
         } else {
-          char = 1;
+          line.push(1);
         }
-        var tile = new Tile(x*64, y*64, char);
-        line.push(tile);
       }
-      this.map.push(line);
+      t.push(line);
     }
+    return t;
   }
 
-  this.parse = function( action ){
-    for (var y = 0; y < this.h; y++ ){
-      for(var x = 0; x < this.w; x++){
-        action(x, y);
-      }
-    }
-  }
-
-  this.update = function() {
-    for(var i = 0; i < app.claimed.length; i++){
-      if(app.claimed[i].toClaim){
-        app.claimed[i].toClaim = false;
-      }
-      var nx = app.claimed[i].x / 64;
-      var ny = app.claimed[i].y / 64;
-
-      if(ny - 1 >= 0 && !app.map.map[ny-1][nx].claimed){
-        app.map.map[ny-1][nx].toClaim = true;
-      }
-      if(ny + 1 < this.h && !app.map.map[ny+1][nx].claimed){
-        app.map.map[ny+1][nx].toClaim = true;
-      }
-      if(nx - 1 >= 0 && !app.map.map[ny][nx-1].claimed){
-        app.map.map[ny][nx-1].toClaim = true;
-      }
-      if(nx + 1 < this.w && !app.map.map[ny][nx+1].claimed){
-        app.map.map[ny][nx+1].toClaim = true;
+  render() {
+    for (var i = 0; i < this.h; i++) {
+      for (var j = 0; j < this.w; j++) {
+        this.tiles[i][j].render(i, j);
       }
     }
   }
 
-  this.displayInfo = function() {
-    var display = (x, y) => {
-      var tile = this.map[y][x];
-      if(tile.toClaim){
-        app.layer.save();
-        app.layer.a(0.8);
-        app.layer.fillStyle('black');
-        app.layer.fillRect(tile.x, tile.y, 64, 64);
-        app.layer.restore()
-        app.layer.drawImage(app.images["plus"], tile.x, tile.y);
-      } else if(!tile.toClaim) {
-        app.layer.save();
-        app.layer.a(tile.alpha);
-        app.layer.fillStyle('black');
-        app.layer.fillRect(tile.x, tile.y, 64, 64);
-        app.layer.restore()
-      }
-    }
-    this.parse(display);
+  in(x, y) {
+    return (x < this.w && x >= 0 && y < this.h && y >= 0);
   }
 
-  this.display = function() {
-    var display = (x, y) => {
-      var tile = this.map[y][x]
-      switch (tile.type) {
-        case 0:
-        var color = "yellow";
-        break;
-        case 1:
-        var color = "orange";
-        break;
-      }
-
-      app.layer.fillStyle(color);
-      app.layer.fillRect(tile.x, tile.y, 64, 64);
-      app.layer.drawImage(app.images["mars"], tile.x, tile.y);
-
-    }
-    this.parse(display);
+  isClaimed(x, y) {
+    if (this.in(x, y))
+      return this.tiles[y][x].claimed;
   }
+
+  update() {
+    for (var i = 0; i < this.h; i++) {
+      for (var j = 0; j < this.w; j++) {
+        if(this.tiles[i][j].claimed) {
+          if (this.in(j+1, i))
+            this.tiles[i][j+1].toClaim = true;
+          if (this.in(j-1, i))
+            this.tiles[i][j-1].toClaim = true;
+          if (this.in(j, i+1))
+            this.tiles[i+1][j].toClaim = true;
+          if (this.in(j, i-1))
+            this.tiles[i-1][j].toClaim = true;
+        }
+      }
+    }
+  }
+
 }

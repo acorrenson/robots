@@ -1,4 +1,20 @@
 
+function buildMap(map) {
+  var t = [];
+  for (var i = 0; i < map.h; i++) {
+    var line = [];
+    for (var j = 0; j < map.w; j++) {
+      if(map.isClaimed(j, i)) {
+        line.push(0);
+      } else {
+        line.push(1);
+      }
+    }
+    t.push(line);
+  }
+  return t;
+}
+
 // is in map
 function im(map, x, y) {
   return (x < map[0].length && x >= 0 && x >= 0 && y < map.length && y >= 0);
@@ -11,7 +27,7 @@ function showPath(node) {
   }
 }
 
-function buildPath(node) {
+function buildPath(node, end) {
   // build an array of MapNode
   var a = node;
   var t = [];
@@ -19,7 +35,9 @@ function buildPath(node) {
     a = a.parent;
     t.push(a);
   }
-  return t.reverse();
+  var r = t.reverse();
+  r.push(end)
+  return r;
 }
 
 function dispPath(t) {
@@ -61,7 +79,7 @@ class MapNode {
 
   equals(node) {
     // valueOfTheNode = MyValue ?
-    return (node.x === this.x && node.y === this.y); 
+    return (node.x === this.x && node.y === this.y);
   }
 }
 
@@ -103,8 +121,5 @@ function bfs(map, start, end) {
     current = open.defile();
   }
   
-  return buildPath(current);
+  return buildPath(current, end);
 }
-
-// var a = new MapNode(map, 0, 0);
-// var b = new MapNode(map, 3, 0);
