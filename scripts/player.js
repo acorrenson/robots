@@ -53,6 +53,7 @@ class Player {
       this.onTheGo = false;
       this.step = 0;
       this.pathStep = 0;
+      this.state = 0;
     }
 
     // after n transitions, check the following

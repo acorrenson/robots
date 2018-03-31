@@ -1,7 +1,7 @@
 class Tile {
   constructor(type) {
     this.type = type;
-    this.alpha   = 0.98;
+    this.alpha   = 0.95;
     this.reveal  = true;
     this.claimed = false;
     this.toClaim = false;
