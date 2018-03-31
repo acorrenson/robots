@@ -1,172 +1,82 @@
-function Player(){
-    this.energy = 100;
-    this.nx = 4;
-    this.ny = 4;
-    this.image = 'rover1';
+class Player {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.xg = this.x;
+    this.yg = this.y;
+    this.state = 0;
+    this.texture = ["rover1", "rover1Right", "rover1Down", "rover1Left", "rover1s"];
     this.selected = false;
-    //this.marked = [];
+    this.step = 0;
+    this.pathStep = 0;
+    this.onTheGo = false;
+    this.speed = 20;
+  }
 
-    this.select = function() {
-        if(!this.selected){
-            this.selected = true;
-            this.image = 'rover1s';
-        } else {
-            this.deselect();
-        }
+  select() {
+    this.selected = true;
+    this.state = 4;
+  }
+
+  findPathTo(x, y) {
+
+    var map = app.map.getMap();
+
+    var a = new MapNode(map, this.x, this.y);
+    var b = new MapNode(map, x, y);
+
+    var p = bfs(map, a, b);
+
+    return p;
+  }
+
+  goTo(x, y) {
+    if(!this.onTheGo && this.selected && (x != this.x || y != this.y)) {
+      this.path = this.findPathTo(x, y);
+      this.onTheGo = true;
+      this.selected = false;
+    }
+  }
+
+  update() {
+    if(this.onTheGo && this.pathStep < this.path.length) {
+      var dx = this.path[this.pathStep].x - this.x;
+      var dy = this.path[this.pathStep].y - this.y;
+
+      this.xg += dx / this.speed;
+      this.yg += dy / this.speed;
+
+      this.step += 1;
     }
 
-    this.deselect = function() {
-        this.selected = false;
-        //this.image = 'rover1';
+    if (this.onTheGo && this.path && this.pathStep >= this.path.length) {
+      this.onTheGo = false;
+      this.step = 0;
+      this.pathStep = 0;
     }
 
-    this.update = function() {
-
+    // after n transitions, check the following
+    // step of the path
+    if (this.step === this.speed) {
+      this.x = this.path[this.pathStep].x;
+      this.y = this.path[this.pathStep].y;
+      this.xg = this.x;
+      this.yg = this.y;
+      this.step = 0;
+      this.pathStep += 1;
     }
 
-    this.draw = function() {
-        app.layer.drawImage(app.images[this.image], this.nx * 64, this.ny * 64);
-        var x = this.nx * 64;
-        var y = this.ny * 64;
-        var w = this.energy/100*52;
-        app.layer.fillStyle('white');
-        app.layer.fillRect(x+6, y-8, 52, 6);
-        if(w>=0) {
-            app.layer.fillStyle('cyan');
-            app.layer.fillRect(x+6, y-8, w, 6);
-        }
-    }
+    // change texutre according to position
+    if(dx < 0) this.state = 3;
+    if(dx > 0) this.state = 1;
+    if(dy > 0) this.state = 2;
+    if(dy < 0) this.state = 0;
+  }
 
-    this.drawSelector = function(x, y) {
-        app.layer
-            .save()
-            .a(0.5)
-            .fillStyle('cyan')
-            .fillRect(app.px, app.py, 64, 64)
-            .restore()
-    }
+  render() {
+    var texture = this.texture[this.state];
+    var image = app.images[texture];
+    app.layer.drawImage(image, this.xg * 64, this.yg * 64);
+  }
 
-    this.fillMarked = function() {
-        var marked = [];
-        for(var a = 0; a < app.map.map.length; a++){
-            var line = [];
-            for(var b = 0; b < app.map.map[0].length; b++){
-                line.push(false)
-            }
-            marked.push(line)
-        }
-        this.marked = marked;
-        return marked;
-    }
-
-    this.findPathTo = function(map, target, start) {
-
-        var sx = start.x;
-        var sy = start.y;
-
-        var tx = target.x;
-        var ty = target.y;
-
-        if( sx < 0 || sx >= map[0].length || sy < 0 || sy >= map.length || !map[sy][sx].claimed ||
-            app.player.marked[sy][sx] ){
-                return;
-        }
-
-        app.player.marked[sy][sx] = true;
-
-        if( sx === tx && sy === ty )
-            return [target];
-
-        var q = undefined;
-
-        var dirx = Math.sign(tx - sx);
-        var diry = Math.sign(ty - sy);
-
-        var prio;
-
-        if(Math.abs(dirx) === 0) {
-            dirx = -1;
-            prio = 'y';
-            console.log('prio y')
-        }
-
-        if(Math.abs(diry) === 0) {
-            diry = -1;
-            prio = 'x';
-            console.log('prio x')
-        }
-
-        var son1 = {x: sx + dirx, y: sy};
-        var son2 = {x: sx, y: sy + diry};
-        var son3 = {x: sx - dirx, y: sy};
-        var son4 = {x: sx, y: sy - diry};
-
-        var son = [son1, son2, son3, son4];
-
-        if(prio === 'y') son = [son2, son1, son4, son3];
-
-        for(var i = 0; i < son.length; i++) {
-            var p = app.player.findPathTo(map, target, son[i]);
-            if (p && (!q || p.length < q.length)) q = p;
-        }
-
-
-        var r = q && [start].concat(q);
-        return r;
-    }
-
-    this.followPath = function(path, i) {
-        this.energy -= 1;
-        if(i >= path.length){
-            setTimeout( () => {
-                this.image = 'rover1';
-            }, 200);
-            this.mooving = false;
-            return;
-        }
-
-        var a = path[i].x - this.nx;
-        var b = path[i].y - this.ny;
-
-        if(a <= -1){
-            this.image = 'rover1Left';
-        } else if(a > 0) {
-            this.image = 'rover1Right';
-        }
-
-        if(b <= -1) {
-            this.image = 'rover1';
-        } else if(b >= 1){
-            this.image = 'rover1Down';
-        }
-
-        app.tween(app.player)
-            .to({nx: path[i].x, ny: path[i].y}, 0.5)
-
-        setTimeout( () => {
-            this.followPath(path, i+1)
-        }, 500);
-    }
-
-    this.renderPath = function(path) {
-        if(!path)
-        return;
-
-        if(path.length >= 4) {
-            var c = 'red';
-        } else {
-            var c = 'green';
-        }
-
-        for(var i = 0; i < path.length; i++) {
-            app.layer
-                .save()
-                .a(0.5)
-                .fillStyle(c)
-                .fillRect(path[i].x*64, path[i].y*64, 64, 64)
-                .restore()
-        }
-    }
-
-
-}//end class
+}
