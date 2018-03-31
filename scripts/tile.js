@@ -1,4 +1,5 @@
-function Tile(x, y, type) {
+class Tile {
+  constructor(x, y, type) {
     this.x = x;
     this.y = y;
     this.type = type;
@@ -6,10 +7,10 @@ function Tile(x, y, type) {
     this.reveal  = true;
     this.claimed = false;
 
-    this.claim = function() {
-        app.claimed.push(this);
-        this.alpha = 0;
-        this.claimed = true;
-    }
-
+  }
+  claim() {
+    app.claimed.push(this);
+    this.alpha = 0;
+    this.claimed = true;
+  }
 }
