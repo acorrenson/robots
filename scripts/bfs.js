@@ -101,19 +101,29 @@ class Queue {
   }
 }
 
+function includes(list, node) {
+  for (let e of list) {
+    if (node.equals(e)) return true;
+  }
+  return false;
+}
+
 function bfs(map, start, end) {
-
-  var marked = []
+  // Breadth First Search
+  // map : 2D array
+  // start : starting node
+  // end : target
+  // Return the shortest path between START and NODE
+  // accross MAP.
+  
+  var marked = [];
   var open = new Queue();
-
   var current = start;
 
-  while(! current.equals(end)) {
-
+  while(!current.equals(end)) {
     current.getSons();
-
     for(sons of current.sons) {
-      if(!marked.includes(sons)) {
+      if(!includes(marked, sons)) {
         open.enfile(sons);
         marked.push(sons);
       }
